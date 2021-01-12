@@ -81,6 +81,40 @@ class LogServiceImpl extends BaseService implements LogService
         return $this->create($message, $data, $level);
     }
 
+    public function searchByPagination($conditions, $orderBy): array
+    {
+        $conditions = $this->prepareConditions($conditions);
+
+        $logData = $this->getLogDao()->searchByPagination($conditions, $orderBy);
+
+        return $this->filterData($logData);
+    }
+
+    protected function filterData($data): array
+    {
+        foreach ($data['data'] as &$value) {
+            if (!empty($value['level'])) {
+                $value['level'] = self::$level[$value['level']];
+            }
+        }
+
+        return $data;
+    }
+
+    protected function prepareConditions($conditions): array
+    {
+        $newConditions = [];
+
+        if (!empty($conditions['message'])) {
+            $newConditions[] = ['message', 'like', '%'.$conditions['message'].'%'];
+        }
+        if (!empty($conditions['level'])) {
+            $newConditions[] = ['level', '=', $conditions['level']];
+        }
+
+        return $newConditions;
+    }
+
     private function getLogDao(): LogDao
     {
         return $this->getDao('Log:Log');

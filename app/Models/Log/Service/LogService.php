@@ -25,4 +25,6 @@ interface LogService extends BaseServiceInterface
     public function createError($message, $data = [], $level = LogServiceImpl::ERROR);
 
     public function createOff($message, $data = [], $level = LogServiceImpl::OFF);
+
+    public function searchByPagination($conditions, $orderBy): array;
 }

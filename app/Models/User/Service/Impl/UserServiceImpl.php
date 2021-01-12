@@ -156,17 +156,16 @@ class UserServiceImpl extends BaseService implements UserService
     {
         $gruopInfo = $this->getGroupService()->getAll();
         $groupIds = ArrayTools::index($gruopInfo, 'id');
-        $data = !empty($data['data']) ? $data['data'] : $data;
 
-        if (!empty($data['group'])) {
-            $data['groupName'] = !empty($groupIds[$data['group']]) ? $groupIds[$data['group']]['name'] : '未分组';
-
-            return $data;
-        }
-
-        foreach ($data as &$value) {
-            if (!empty($groupIds[$value['group']])) {
-                $value['groupName'] = $groupIds[$value['group']]['name'];
+        if (empty($data['data'])) {
+            if (!empty($data['group'])) {
+                $data['groupName'] = !empty($groupIds[$data['group']]) ? $groupIds[$data['group']]['name'] : '未分组';
+            }
+        } else {
+            foreach ($data['data'] as &$value) {
+                if (!empty($groupIds[$value['group']])) {
+                    $value['groupName'] = $groupIds[$value['group']]['name'];
+                }
             }
         }
 
